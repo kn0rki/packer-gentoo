@@ -1,8 +1,4 @@
 {
-  "variables": {
-    "token": "{{env `VAGRANT_CLOUD_TOKEN`}}",
-    "version": "{{env `VAGRANT_BOX_VERSION`}}"
-  },
   "provisioners": [
     {
       "type": "shell",
@@ -21,6 +17,12 @@
     {
       "type": "shell",
       "script": "scripts/cleanup.sh",
+      "execute_command": "sudo '{{ .Path }}'",
+      "expect_disconnect": true
+    },
+    {
+      "type": "shell",
+      "script": "scripts/zerofree.sh",
       "execute_command": "sudo '{{ .Path }}'"
     }
   ],
@@ -28,9 +30,11 @@
     {
       "type": "virtualbox-iso",
       "boot_command": [
-        "<enter><wait10>",
-        "40<enter><wait10>",
-        "<wait10><wait10>",
+        "<enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5>",
+        "<enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5>",
+        "<enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5>",
+        "<enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5>",
+        "<enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5>",
         "wget http://{{ .HTTPIP }}:{{ .HTTPPort }}/scripts/provision_gentoo.sh<enter><wait>",
         "echo http://{{ .HTTPIP }}:{{ .HTTPPort }} > /root/config_server_uri<enter>",
         "chmod +x provision_gentoo.sh && ./provision_gentoo.sh<enter>"
@@ -40,7 +44,7 @@
       "http_directory": ".",
       "guest_os_type": "Gentoo_64",
       "headless": "true",
-      "iso_url": "http://sd.ai/gentoo.php",
+      "iso_url": "http://vagrant.widgit.com/gentoo.php",
       "iso_checksum_type": "none",
       "communicator": "ssh",
       "ssh_username": "vagrant",
@@ -56,18 +60,57 @@
       ]
     },
     {
-      "type": "hyperv-iso",
+      "type": "vmware-iso",
       "boot_command": [
-        "<enter><wait10>",
-        "40<enter><wait10>",
-        "<wait10><wait10>",
+        "<enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5>",
+        "<enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5>",
+        "<enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5>",
+        "<enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5>",
+        "<enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5>",
         "wget http://{{ .HTTPIP }}:{{ .HTTPPort }}/scripts/provision_gentoo.sh<enter><wait>",
-        "echo http://{{ .HTTPIP }}:{{ .HTTPPort }} > /root/config_server_uri<enter>"
+        "echo http://{{ .HTTPIP }}:{{ .HTTPPort }} > /root/config_server_uri<enter>",
+        "chmod +x provision_gentoo.sh && ./provision_gentoo.sh<enter>"
       ],
       "boot_wait": "10s",
       "disk_size": 32768,
       "http_directory": ".",
-      "iso_url": "http://sd.ai/gentoo.php",
+      "guest_os_type": "other3xlinux-64",
+      "headless": "true",
+      "iso_url": "http://vagrant.widgit.com/gentoo.php",
+      "iso_checksum_type": "none",
+      "communicator": "ssh",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_timeout": "4h",
+      "shutdown_command": "sudo systemctl poweroff",
+      "vm_name": "gentoo-minimal",
+      "vmx_data": {
+        "cpuid.coresPerSocket": "4",
+        "memsize": "4096",
+        "numvcpus": "4",
+        "ethernet0.virtualDev": "e1000",
+        "ethernet0.connectionType": "nat",
+        "ethernet0.present": "TRUE",
+        "ethernet0.pcislotnumber": "32"
+      }
+    },
+    {
+      "type": "hyperv-iso",
+      "boot_command": [
+        "<enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5>",
+        "<enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5>",
+        "<enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5>",
+        "<enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5>",
+        "<enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5><enter><wait5>",
+        "wget http://{{ .HTTPIP }}:{{ .HTTPPort }}/scripts/provision_gentoo.sh<enter><wait>",
+        "echo http://{{ .HTTPIP }}:{{ .HTTPPort }} > /root/config_server_uri<enter>",
+        "chmod +x provision_gentoo.sh && ./provision_gentoo.sh<enter>"
+      ],
+      "boot_wait": "10s",
+      "disk_size": 32768,
+      "http_directory": ".",
+      "iso_url": "http://vagrant.widgit.com/gentoo.php",
       "iso_checksum_type": "none",
       "communicator": "ssh",
       "ssh_username": "vagrant",
@@ -86,15 +129,11 @@
     [
       {
         "type": "vagrant",
-        "output": "boxen/gentoo-minimal-{{.Provider}}.box"
-      },
-      {
-        "type": "vagrant-cloud",
-        "access_token": "{{user `token`}}",
-        "box_tag": "symbols/gentoo-minimal",
-        "version": "{{user `version`}}",
-        "no_release": true
+        "output": "{{user `outfile`}}"
       }
     ]
-  ]
+  ],
+  "variables": {
+    "outfile": "boxen/gentoo-minimal-{{.Provider}}.box"
+  }
 }

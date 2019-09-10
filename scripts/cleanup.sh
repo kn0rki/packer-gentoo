@@ -3,7 +3,7 @@
 set -e
 set -x
 
-emerge sys-fs/zerofree
+emerge sys-fs/zerofree sys-fs/shake
 
 echo "Removing uneeded packages"
 
@@ -18,24 +18,20 @@ rm -rf /usr/portage
 rm -rf /var/tmp/*
 rm -rf /root/*
 
-echo "Cleaning the boot volume"
+echo "Defragmenting root filesystem"
 
-zerofree /dev/sda1
+shake / > /dev/null 2>&1
 
-echo "Cleaning swap space"
+echo "Rebooting with read-only file system"
 
-swapoff /dev/sda2
-dd if=/dev/zero of=/dev/sda2 bs=16M || echo Finished
-mkswap /dev/sda2
+# remount the root fs read-only
+# we do it this way because stopping services has proven to be fairly unreliable
 
-echo "Remounting root filesystem read-only"
+sed -i 's/noatime    0 1/noatime,ro 0 1/' /etc/fstab
+systemctl reboot
 
-systemctl stop hv_kvp_daemon.service
-systemctl stop systemd-journald.socket
-systemctl stop systemd-journald.service
+# sleep until we get kicked out by systemd, so packer doesn't reconnect before
+# we're ready
 
-mount -o remount,ro /
+sleep 600
 
-echo "Cleaning the root volume"
-
-zerofree -v /dev/sda3

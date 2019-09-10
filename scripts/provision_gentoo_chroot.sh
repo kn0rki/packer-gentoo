@@ -7,6 +7,10 @@ set -x
 echo "Syncing Portage"
 emerge-webrsync && emerge --sync --quiet
 
+# Set the portage profile
+eselect profile set default/linux/amd64/17.0/systemd
+. /etc/profile
+
 # Install updates
 echo "Updating system"
 emerge -uDN @world
@@ -15,6 +19,7 @@ emerge -uDN @world
 echo "Setting locale"
 locale-gen
 eselect locale set "en_GB.utf8"
+
 . /etc/profile
 
 # Grab the kernel sources
@@ -24,7 +29,7 @@ emerge sys-kernel/gentoo-sources
 # Install kernel build tools and configure
 echo "Preparing to build kernel"
 
-emerge sys-kernel/genkernel sys-boot/grub sys-fs/fuse sys-apps/dmidecode
+emerge sys-kernel/genkernel-next sys-boot/grub sys-fs/fuse sys-apps/dmidecode
 
 if [ "$(dmidecode -s system-manufacturer)" == "Microsoft Corporation" ]; then
   # Ensure hyperv modules are loaded at boot, and included in the initramfs
@@ -60,7 +65,7 @@ elif [ "$(dmidecode -s system-product-name)" == "VMware Virtual Platform" ]; the
   echo "app-emulation/open-vm-tools ~amd64" > /etc/portage/package.accept_keywords/vmware
   emerge app-emulation/open-vm-tools
 
-  systemctl enable vmware-tools
+  systemctl enable vmtoolsd
 else
   echo "Unknown hypervisor! :(" 1>&2
   exit 1
@@ -69,13 +74,14 @@ fi
 # Set up the things we need for a base system
 echo "Configuring up the base system"
 
-# sudo, dhcp client and cron
+# sudo and cron
 echo "app-admin/sudo -sendmail" > /etc/portage/package.use/sudo
-emerge net-misc/dhcpcd sys-process/cronie app-admin/sudo
+emerge sys-process/cronie app-admin/sudo
 
 # systemd setup and hostname
-systemd-machine-id-setup
-echo "gentoo-minimal.local" > /etc/hostname
+systemd-machine-id-setup  --commit # remember to remove this before packaging the box
+echo "gentoo-minimal" > /etc/hostname
+echo "127.0.1.1 gentoo-minimal.local gentoo-minimal" >> /etc/hosts
 
 # networking
 cat > /etc/systemd/network/50-dhcp.network <<EOT
@@ -84,6 +90,9 @@ Name=eth0
 
 [Network]
 DHCP=yes
+
+[DHCP]
+ClientIdentifier=mac
 EOT
 
 systemctl enable systemd-networkd.service
@@ -116,8 +125,14 @@ echo "Installing bootloader"
 grub-install /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
 
+echo "Installing additional tools"
+emerge @tools
+
 echo "Updating resolv.conf"
 
 rm /etc/resolv.conf
 ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
 systemctl enable systemd-resolved.service
+
+echo "Removing provision script"
+rm /root/provision_gentoo_chroot.sh

@@ -5,6 +5,8 @@
       "scripts": [
         "scripts/netfs.sh",
         "scripts/docker.sh",
+        "scripts/vmware.sh",
+        "scripts/virtualbox.sh",
         "scripts/get_versions.sh"
       ],
       "execute_command": "sudo '{{ .Path }}'"
@@ -53,7 +55,7 @@
       "ssh_port": 22,
       "ssh_timeout": "4h",
       "shutdown_command": "sudo systemctl poweroff",
-      "vm_name": "gentoo-docker",
+      "vm_name": "gentoo-docker-virt",
       "guest_additions_mode": "disable",
       "vboxmanage": [
         ["modifyvm", "{{.Name}}", "--memory", "4096"],
@@ -85,7 +87,7 @@
       "ssh_port": 22,
       "ssh_timeout": "4h",
       "shutdown_command": "sudo systemctl poweroff",
-      "vm_name": "gentoo-docker",
+      "vm_name": "gentoo-docker-virt",
       "vmx_data": {
         "cpuid.coresPerSocket": "4",
         "memsize": "4096",
@@ -119,7 +121,7 @@
       "ssh_port": 22,
       "ssh_timeout": "4h",
       "shutdown_command": "sudo systemctl poweroff",
-      "vm_name": "gentoo-docker",
+      "vm_name": "gentoo-docker-virt",
       "generation": 1,
       "ram_size": "4096",
       "enable_dynamic_memory": false,
