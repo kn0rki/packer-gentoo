@@ -18,7 +18,7 @@ emerge -uDN @world
 # Set the system locale
 echo "Setting locale"
 locale-gen
-eselect locale set "en_GB.utf8"
+eselect locale set "de_DE.utf8"
 
 . /etc/profile
 
@@ -41,7 +41,7 @@ fi
 # Build the kernel with genkernel
 echo "Building the kernel"
 
-genkernel --kernel-config=/etc/kernels/kernel_config --makeopts=-j5 all
+genkernel --makeopts=-j17 all
 
 # Build & install the VM tools
 
