@@ -52,7 +52,7 @@ mount /dev/sda3 /mnt/gentoo
 mkdir -p /mnt/gentoo/boot
 mount /dev/sda1 /mnt/gentoo/boot
 
-  curl -SsLl "http://ftp.snt.utwente.nl/pub/linux/gentoo/releases/amd64/autobuilds/20200722T214503Z/stage3-amd64-systemd-20200722T214503Z.tar.xz" | tar xp$DECOMPRESS_FLAG -C /mnt/gentoo --xattrs --numeric-owner && break
+  curl -SsLl "http://ftp.snt.utwente.nl/pub/linux/gentoo/releases/amd64/autobuilds/20200722T214503Z/stage3-amd64-systemd-20200722T214503Z.tar.xz" | tar xpJ -C /mnt/gentoo --xattrs --numeric-owner && break
 
 
 # modify the chroot with some custom settings
