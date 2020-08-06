@@ -52,31 +52,23 @@ mount /dev/sda3 /mnt/gentoo
 mkdir -p /mnt/gentoo/boot
 mount /dev/sda1 /mnt/gentoo/boot
 
-while [ "a" != "b" ]
-do
-  DECOMPRESS_FLAG=$(curl -w "%{redirect_url}" -o /dev/null -s "http://vagrant.widgit.com/gentoo.php?file=stage3" | egrep 'bz2$' > /dev/null && echo "j" || echo "-J")
-  if [ "x$DECOMPRESS_FLAG" == "x-J" ]; then
-    DECOMPRESS_FLAG=' -J'
-  fi
+  curl -SsLl "http://ftp.snt.utwente.nl/pub/linux/gentoo/releases/amd64/autobuilds/20200722T214503Z/stage3-amd64-systemd-20200722T214503Z.tar.xz" | tar xp$DECOMPRESS_FLAG -C /mnt/gentoo --xattrs --numeric-owner && break
 
-  curl -SsLl "http://vagrant.widgit.com/gentoo.php?file=stage3" | tar xp$DECOMPRESS_FLAG -C /mnt/gentoo --xattrs --numeric-owner && break
-  sleep 30
-done
 
 # modify the chroot with some custom settings
 echo "Setting up chroot configuration"
 
 # configure portage
 cat >> /mnt/gentoo/etc/portage/make.conf <<EOT
-MAKEOPTS="-j5"
+MAKEOPTS="-j17"
 EMERGE_DEFAULT_OPTS="--quiet-build --jobs=4 --load-average=4 --autounmask-continue"
-USE="-doc"
+USE="-doc -X -gnome -kde"
 EOT
 
 # use systemd
 sed -i 's/USE="/USE="systemd /' /mnt/gentoo/etc/portage/make.conf
-sed -i 's/CFLAGS="-O2/CFLAGS="-s -Os/' /mnt/gentoo/etc/portage/make.conf
-echo 'LDFLAGS="-s"' >> /mnt/gentoo/etc/portage/make.conf
+sed -i 's/CFLAGS="-O2/CFLAGS="-march=znver2 -pipe/' /mnt/gentoo/etc/portage/make.conf
+#echo 'LDFLAGS="-s"' >> /mnt/gentoo/etc/portage/make.conf
 
 # package-specific configuration and unmasks
 mkdir -p /mnt/gentoo/etc/portage/package.accept_keywords
@@ -85,16 +77,19 @@ touch /mnt/gentoo/etc/portage/package.accept_keywords/zzz-autounmask
 touch /mnt/gentoo/etc/portage/package.use/zzz-autounmask
 
 echo "sys-kernel/gentoo-sources" > /mnt/gentoo/etc/portage/package.accept_keywords/kernel
+echo "sys-kernel/open-vm-tools" > /mnt/gentoo/etc/portage/package.accept_keywords/open-vm-tools
 
 echo "sys-kernel/gentoo-sources symlink experimental" > /mnt/gentoo/etc/portage/package.use/kernel
 echo "sys-boot/grub efiemu -fonts -nls -themes" > /mnt/gentoo/etc/portage/package.use/grub
 echo "sys-apps/systemd nat" > /mnt/gentoo/etc/portage/package.use/systemd
 
 # Locale and time
-echo "Etc/UTC" > /mnt/gentoo/etc/timezone
+echo "Europe/Berlin" > /mnt/gentoo/etc/timezone
 cat > /mnt/gentoo/etc/locale.gen <<EOT
-en_GB ISO-8859-1
-en_GB.UTF-8 UTF-8
+en_US ISO-8859-1
+en_US.UTF-8 UTF-8
+de_DE ISO-8859-1
+de_DE.UTF-8 UTF-8
 EOT
 
 # Create an fstab
@@ -104,25 +99,6 @@ cat > /mnt/gentoo/etc/fstab <<EOT
 /dev/sda3 /     ext4 noauto,noatime    0 1
 EOT
 
-# kernel config & friends
-mkdir -p /mnt/gentoo/etc/{kernels,default}
-wget ${CONFIG_SERVER_URI}/gentoo/genkernel.conf -O /mnt/gentoo/etc/genkernel.conf
-wget ${CONFIG_SERVER_URI}/gentoo/kernel_config -O /mnt/gentoo/etc/kernels/kernel_config
-wget ${CONFIG_SERVER_URI}/gentoo/default_grub -O /mnt/gentoo/etc/default/grub
-
-mkdir -p /mnt/gentoo/usr/lib/systemd/system
-wget ${CONFIG_SERVER_URI}/gentoo/hv_fcopy_daemon.service -O /mnt/gentoo/usr/lib/systemd/system/hv_fcopy_daemon.service
-wget ${CONFIG_SERVER_URI}/gentoo/hv_vss_daemon.service -O /mnt/gentoo/usr/lib/systemd/system/hv_vss_daemon.service
-wget ${CONFIG_SERVER_URI}/gentoo/hv_kvp_daemon.service -O /mnt/gentoo/usr/lib/systemd/system/hv_kvp_daemon.service
-
-mkdir -p /mnt/gentoo/etc/portage/sets
-wget ${CONFIG_SERVER_URI}/gentoo/tools -O /mnt/gentoo/etc/portage/sets/tools
-
-mkdir -p /mnt/gentoo/etc/portage/patches/app-emulation/virtualbox-modules-5.1.30
-wget ${CONFIG_SERVER_URI}/gentoo/virtualbox-modules-5.1.30-udp.patch -O /mnt/gentoo/etc/portage/patches/app-emulation/virtualbox-modules-5.1.30/udp.patch
-
-mkdir -p /mnt/gentoo/etc/portage/patches/app-emulation/virtualbox-5.2.4
-wget ${CONFIG_SERVER_URI}/gentoo/virtualbox-5.2.4-x11.patch -O /mnt/gentoo/etc/portage/patches/app-emulation/virtualbox-5.2.4/x11.patch
 
 # enter the chroot and run the in-chroot script
 echo "Entering chroot"
@@ -135,7 +111,7 @@ mount --make-rslave /mnt/gentoo/dev
 
 cp /etc/resolv.conf /mnt/gentoo/etc/resolv.conf
 
-wget ${CONFIG_SERVER_URI}/scripts/provision_gentoo_chroot.sh -O /mnt/gentoo/root/provision_gentoo_chroot.sh
+wget https://github.com/kn0rki/packer-gentoo/raw/master/scripts/provision_gentoo_chroot.sh -O /mnt/gentoo/root/provision_gentoo_chroot.sh
 chmod +x /mnt/gentoo/root/provision_gentoo_chroot.sh
 
 chroot /mnt/gentoo /root/provision_gentoo_chroot.sh
