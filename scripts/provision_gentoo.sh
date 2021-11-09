@@ -52,7 +52,7 @@ mount /dev/sda3 /mnt/gentoo
 mkdir -p /mnt/gentoo/boot
 mount /dev/sda1 /mnt/gentoo/boot
 
-  curl -SsLl "https://mirror.netcologne.de/gentoo/releases/amd64/autobuilds/current-stage3-amd64-nomultilib-systemd/stage3-amd64-nomultilib-systemd-20211101T222649Z.tar.xz" | tar xpJ -C /mnt/gentoo --xattrs --numeric-owner && break
+  curl -SsLl "https://mirror.netcologne.de/gentoo/releases/amd64/autobuilds/current-stage3-amd64-systemd/stage3-amd64-systemd-20211101T222649Z.tar.xz" | tar xpJ -C /mnt/gentoo --xattrs --numeric-owner && break
 
 
 # modify the chroot with some custom settings
