@@ -24,6 +24,7 @@ eselect locale set "de_DE.utf8"
 
 # Grab the kernel sources
 echo "Installing kernel source"
+echo "sys-kernel/gentoo-sources -firmware" > /etc/portage/package.use/gentoo-sources
 emerge sys-kernel/gentoo-sources
 
 # Install kernel build tools and configure
@@ -111,8 +112,7 @@ date > /etc/ansible_box_build_time
 useradd -s /bin/bash -m ansible
 
 mkdir -pm 700 /home/ansible/.ssh
-wget -O /home/ansible/.ssh/authorized_keys \
-  'https://github.com/kn0rki.keys'
+wget -O /home/ansible/.ssh/authorized_keys 'https://github.com/kn0rki.keys'
 chmod 0600 /home/ansible/.ssh/authorized_keys
 chown -R ansible:ansible /home/ansible/.ssh
 
