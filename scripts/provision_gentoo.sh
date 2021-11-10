@@ -112,7 +112,7 @@ mount --make-rslave /mnt/gentoo/dev
 
 cp /etc/resolv.conf /mnt/gentoo/etc/resolv.conf
 
-wget https://github.com/kn0rki/packer-gentoo/raw/master/scripts/provision_gentoo_chroot.sh -O /mnt/gentoo/root/provision_gentoo_chroot.sh
+wget https://raw.githubusercontent.com/kn0rki/packer-gentoo/raw/master/scripts/provision_gentoo_chroot.sh -O /mnt/gentoo/root/provision_gentoo_chroot.sh
 chmod +x /mnt/gentoo/root/provision_gentoo_chroot.sh
 
 chroot /mnt/gentoo /root/provision_gentoo_chroot.sh

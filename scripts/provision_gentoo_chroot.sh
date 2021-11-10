@@ -8,7 +8,7 @@ echo "Syncing Portage"
 emerge-webrsync && emerge --sync --quiet
 
 # Set the portage profile
-eselect profile set default/linux/amd64/17.0/systemd
+eselect profile set default/linux/amd64/17.1/systemd
 . /etc/profile
 
 # Install updates
@@ -62,7 +62,7 @@ elif [ "$(dmidecode -s system-product-name)" == "VirtualBox" ]; then
 
   systemctl enable virtualbox-guest-additions.service
 elif [ "$(dmidecode -s system-product-name)" == "VMware Virtual Platform" ]; then
-  echo "app-emulation/open-vm-tools ~amd64" > /etc/portage/package.accept_keywords/vmware
+  #echo "app-emulation/open-vm-tools ~amd64" > /etc/portage/package.accept_keywords/vmware
   emerge app-emulation/open-vm-tools
 
   systemctl enable vmtoolsd
@@ -103,21 +103,20 @@ echo "UseDNS no" >> /etc/ssh/sshd_config
 
 yes YES | etc-update --automode -9
 
-# Create the vagrant user with the vagrant public key
-echo "Creating Vagrant user"
+# Create the ansible user with the ansible public key
+echo "Creating ansible user"
 
-date > /etc/vagrant_box_build_time
+date > /etc/ansible_box_build_time
 
-useradd -s /bin/bash -m vagrant
-echo -e "vagrant\nvagrant" | passwd vagrant
+useradd -s /bin/bash -m ansible
 
-mkdir -pm 700 /home/vagrant/.ssh
-wget -O /home/vagrant/.ssh/authorized_keys \
-  'https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub'
-chmod 0600 /home/vagrant/.ssh/authorized_keys
-chown -R vagrant:vagrant /home/vagrant/.ssh
+mkdir -pm 700 /home/ansible/.ssh
+wget -O /home/ansible/.ssh/authorized_keys \
+  'https://github.com/kn0rki.keys'
+chmod 0600 /home/ansible/.ssh/authorized_keys
+chown -R ansible:ansible /home/ansible/.ssh
 
-echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+echo 'ansible ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 
 # Install grub and hope everything is ready!
 echo "Installing bootloader"
