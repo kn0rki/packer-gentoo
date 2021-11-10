@@ -111,14 +111,14 @@ echo "Creating ansible user"
 date > /etc/ansible_box_build_time
 
 useradd -s /bin/bash -m ansible
-echo -e "Kennwort1\!\nKennwort1\!" | passwd ansible
+echo -e "Kennwort1!\nKennwort1!" | passwd ansible
 
 mkdir -pm 700 /home/ansible/.ssh
 wget -O /home/ansible/.ssh/authorized_keys 'https://github.com/kn0rki.keys'
 chmod 0600 /home/ansible/.ssh/authorized_keys
 chown -R ansible:ansible /home/ansible/.ssh
 
-echo 'ansible ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+echo 'ansible ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/ansible
 
 # Install grub and hope everything is ready!
 echo "Installing bootloader"
@@ -127,7 +127,7 @@ grub-install /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "Installing additional tools"
-emerge @tools
+emerge gentoolkit
 
 echo "Updating resolv.conf"
 
