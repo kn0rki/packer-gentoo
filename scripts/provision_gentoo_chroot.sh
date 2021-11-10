@@ -24,12 +24,12 @@ eselect locale set "de_DE.utf8"
 
 # Grab the kernel sources
 echo "Installing kernel source"
-echo "sys-kernel/gentoo-sources -firmware" > /etc/portage/package.use/gentoo-sources
 emerge sys-kernel/gentoo-sources
 
 # Install kernel build tools and configure
 echo "Preparing to build kernel"
 
+echo "sys-kernel/genkernel -firmware" > /etc/portage/package.use/genkernel
 emerge sys-kernel/genkernel sys-boot/grub sys-fs/fuse sys-apps/dmidecode
 
 if [ "$(dmidecode -s system-manufacturer)" == "Microsoft Corporation" ]; then
