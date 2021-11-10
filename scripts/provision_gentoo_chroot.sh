@@ -80,6 +80,7 @@ echo "app-admin/sudo -sendmail" > /etc/portage/package.use/sudo
 emerge sys-process/cronie app-admin/sudo
 
 # systemd setup and hostname
+systemd-machine-id-setup  --print
 systemd-machine-id-setup  --commit # remember to remove this before packaging the box
 echo "gentoo-minimal" > /etc/hostname
 echo "127.0.1.1 gentoo-minimal.local gentoo-minimal" >> /etc/hosts
@@ -110,6 +111,7 @@ echo "Creating ansible user"
 date > /etc/ansible_box_build_time
 
 useradd -s /bin/bash -m ansible
+echo -e "Kennwort1\!\nKennwort1\!" | passwd ansible
 
 mkdir -pm 700 /home/ansible/.ssh
 wget -O /home/ansible/.ssh/authorized_keys 'https://github.com/kn0rki.keys'
