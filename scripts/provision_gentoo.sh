@@ -7,7 +7,7 @@ set -x
 setterm -blank 0 -powersave off
 
 # This will have been written out by the typed boot command
-export CONFIG_SERVER_URI=`cat /root/config_server_uri`
+#export CONFIG_SERVER_URI=`cat /root/config_server_uri`
 
 # Pipe some commands into fdisk to partition
 # Works better than sfdisk as the size of the final partition is flexible
@@ -52,7 +52,7 @@ mount /dev/sda3 /mnt/gentoo
 mkdir -p /mnt/gentoo/boot
 mount /dev/sda1 /mnt/gentoo/boot
 
-  curl -SsLl "https://mirror.netcologne.de/gentoo/releases/amd64/autobuilds/current-stage3-amd64-systemd/stage3-amd64-systemd-20211101T222649Z.tar.xz" | tar xpJ -C /mnt/gentoo --xattrs --numeric-owner && break
+  curl -SsLl "https://mirror.netcologne.de/gentoo/releases/amd64/autobuilds/current-stage3-amd64-systemd/$(curl -SsLl https://mirror.netcologne.de/gentoo/releases/amd64/autobuilds/current-stage3-amd64-systemd/ | grep 'href="stage3-amd64-systemd' | head -n 1 | cut -d '"' -f 2)" | tar xpJ -C /mnt/gentoo --xattrs --numeric-owner && break
 
 
 # modify the chroot with some custom settings
@@ -73,13 +73,13 @@ sed -i 's/CFLAGS="-O2/CFLAGS="-march=znver2 -pipe/' /mnt/gentoo/etc/portage/make
 # package-specific configuration and unmasks
 mkdir -p /mnt/gentoo/etc/portage/package.accept_keywords
 mkdir -p /mnt/gentoo/etc/portage/package.use
-touch /mnt/gentoo/etc/portage/package.accept_keywords/zzz-autounmask
-touch /mnt/gentoo/etc/portage/package.use/zzz-autounmask
+#touch /mnt/gentoo/etc/portage/package.accept_keywords/zzz-autounmask
+#touch /mnt/gentoo/etc/portage/package.use/zzz-autounmask
 
-echo "sys-kernel/gentoo-sources" > /mnt/gentoo/etc/portage/package.accept_keywords/kernel
-echo "sys-kernel/open-vm-tools" > /mnt/gentoo/etc/portage/package.accept_keywords/open-vm-tools
+#echo "sys-kernel/gentoo-sources" > /mnt/gentoo/etc/portage/package.accept_keywords/kernel
+#echo "sys-kernel/open-vm-tools" > /mnt/gentoo/etc/portage/package.accept_keywords/open-vm-tools
 
-echo "sys-kernel/gentoo-sources symlink experimental" > /mnt/gentoo/etc/portage/package.use/kernel
+echo "sys-kernel/gentoo-sources symlink" > /mnt/gentoo/etc/portage/package.use/kernel
 echo "sys-boot/grub efiemu -fonts -nls -themes" > /mnt/gentoo/etc/portage/package.use/grub
 echo "sys-apps/systemd nat" > /mnt/gentoo/etc/portage/package.use/systemd
 
