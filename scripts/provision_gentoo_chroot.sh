@@ -117,7 +117,7 @@ mkdir -pm 700 /home/ansible/.ssh
 wget -O /home/ansible/.ssh/authorized_keys 'https://github.com/kn0rki.keys'
 chmod 0600 /home/ansible/.ssh/authorized_keys
 chown -R ansible:ansible /home/ansible/.ssh
-
+mkdir /etc/sudoers.d
 echo 'ansible ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/ansible
 
 # Install grub and hope everything is ready!
