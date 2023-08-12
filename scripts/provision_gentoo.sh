@@ -61,9 +61,8 @@ echo "Setting up chroot configuration"
 
 # configure portage
 cat >> /mnt/gentoo/etc/portage/make.conf <<EOT
-MAKEOPTS="-j17"
-EMERGE_DEFAULT_OPTS="--quiet-build --jobs=4 --load-average=4 --autounmask-continue"
-USE="-doc -X -gnome -kde"
+EMERGE_DEFAULT_OPTS="--quiet-build --jobs=4 --autounmask-continue --verbose --deep --newuse  --autounmask-write=y --autounmask=y --color=y --columns --nospinner --rebuild-if-new-rev=y --update"
+USE="-doc -X -gnome -kde symlink"
 EOT
 
 # use systemd
@@ -80,7 +79,7 @@ mkdir -p /mnt/gentoo/etc/portage/package.use
 #echo "sys-kernel/gentoo-sources" > /mnt/gentoo/etc/portage/package.accept_keywords/kernel
 #echo "sys-kernel/open-vm-tools" > /mnt/gentoo/etc/portage/package.accept_keywords/open-vm-tools
 
-echo "sys-kernel/gentoo-sources symlink" > /mnt/gentoo/etc/portage/package.use/kernel
+#echo "sys-kernel/gentoo-sources symlink" > /mnt/gentoo/etc/portage/package.use/kernel
 echo "sys-boot/grub efiemu -fonts -nls -themes" > /mnt/gentoo/etc/portage/package.use/grub
 echo "sys-apps/systemd nat" > /mnt/gentoo/etc/portage/package.use/systemd
 
