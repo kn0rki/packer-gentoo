@@ -30,7 +30,7 @@ emerge sys-kernel/gentoo-sources
 echo "Preparing to build kernel"
 
 echo "sys-kernel/genkernel -firmware" > /etc/portage/package.use/genkernel
-emerge sys-kernel/genkernel sys-boot/grub sys-fs/fuse sys-apps/dmidecode
+emerge sys-kernel/genkernel sys-boot/grub sys-fs/fuse sys-apps/dmidecode sys-fs/btrfs-progs
 
 if [ "$(dmidecode -s system-manufacturer)" == "Microsoft Corporation" ]; then
   # Ensure hyperv modules are loaded at boot, and included in the initramfs
@@ -42,7 +42,7 @@ fi
 # Build the kernel with genkernel
 echo "Building the kernel"
 
-genkernel --makeopts=-j17 all
+genkernel --makeopts=-j$(grep processor /proc/cpuinfo| wc -l) all
 
 # Build & install the VM tools
 
@@ -64,6 +64,10 @@ elif [ "$(dmidecode -s system-product-name)" == "VirtualBox" ]; then
   systemctl enable virtualbox-guest-additions.service
 elif [ "$(dmidecode -s system-product-name)" == "VMware Virtual Platform" ]; then
   #echo "app-emulation/open-vm-tools ~amd64" > /etc/portage/package.accept_keywords/vmware
+  emerge app-emulation/open-vm-tools
+
+  systemctl enable vmtoolsd
+elif [ "$(dmidecode -s system-product-name)" == "VMware, Inc." ]; then
   emerge app-emulation/open-vm-tools
 
   systemctl enable vmtoolsd
@@ -111,7 +115,7 @@ echo "Creating ansible user"
 date > /etc/ansible_box_build_time
 
 useradd -s /bin/bash -m ansible
-echo -e "Kennwort1!\nKennwort1!" | passwd ansible
+echo -e "!" | passwd ansible
 
 mkdir -pm 700 /home/ansible/.ssh
 wget -O /home/ansible/.ssh/authorized_keys 'https://github.com/kn0rki.keys'
@@ -123,7 +127,7 @@ echo 'ansible ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/ansible
 # Install grub and hope everything is ready!
 echo "Installing bootloader"
 
-grub-install /dev/sda
+grub-install /dev/sda --force
 grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "Installing additional tools"
