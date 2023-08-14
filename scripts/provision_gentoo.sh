@@ -14,6 +14,7 @@ setterm -blank 0 -powersave off
 echo "Partitioning SDA"
 
 fdisk /dev/sda <<EOT
+o
 n
 p
 1
@@ -40,7 +41,7 @@ echo "Creating filesystems"
 
 mkfs.ext4 /dev/sda1
 mkswap /dev/sda2
-mkfs.ext4 /dev/sda3
+mkfs.btrfs /dev/sda3
 
 swapon /dev/sda2
 
@@ -67,8 +68,10 @@ EOT
 
 # use systemd
 sed -i 's/USE="/USE="systemd /' /mnt/gentoo/etc/portage/make.conf
-sed -i 's/CFLAGS="-O2/CFLAGS="-march=znver2 -pipe/' /mnt/gentoo/etc/portage/make.conf
+sed -i 's/CFLAGS="-O2/CFLAGS="-O2 -march=native  -pipe/' /mnt/gentoo/etc/portage/make.conf
 #echo 'LDFLAGS="-s"' >> /mnt/gentoo/etc/portage/make.conf
+
+mirrorselect -c Germany -i -o >>/mnt/gentoo/etc/portage/make.conf
 
 # package-specific configuration and unmasks
 mkdir -p /mnt/gentoo/etc/portage/package.accept_keywords
@@ -96,7 +99,7 @@ EOT
 cat > /mnt/gentoo/etc/fstab <<EOT
 /dev/sda1 /boot ext4 noauto,noatime    1 2
 /dev/sda2 none  swap sw                0 0
-/dev/sda3 /     ext4 noauto,noatime    0 1
+/dev/sda3 /     btrfs noauto,noatime    0 1
 EOT
 
 
