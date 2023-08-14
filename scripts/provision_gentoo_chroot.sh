@@ -79,6 +79,13 @@ fi
 # Set up the things we need for a base system
 echo "Configuring up the base system"
 
+emerge net-misc/axel
+
+cat >> /mnt/gentoo/etc/portage/make.conf <<EOT
+FETCHCOMMAND="axel --num-connections=5 --no-proxy --quiet --timeout=30 --alternate --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""'
+RESUMECOMMAND="axel --num-connections=5 --no-proxy --quiet --timeout=30 --alternate --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""'
+EOT
+
 # sudo and cron
 echo "app-admin/sudo -sendmail" > /etc/portage/package.use/sudo
 emerge sys-process/cronie app-admin/sudo
