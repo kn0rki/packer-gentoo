@@ -71,7 +71,7 @@ sed -i 's/USE="/USE="systemd /' /mnt/gentoo/etc/portage/make.conf
 sed -i 's/CFLAGS="-O2/CFLAGS="-O2 -march=native  -pipe/' /mnt/gentoo/etc/portage/make.conf
 #echo 'LDFLAGS="-s"' >> /mnt/gentoo/etc/portage/make.conf
 
-mirrorselect -c Germany -i -o >>/mnt/gentoo/etc/portage/make.conf
+mirrorselect --ipv4 -c Germany -s 5 -o >>/mnt/gentoo/etc/portage/make.conf
 
 # package-specific configuration and unmasks
 mkdir -p /mnt/gentoo/etc/portage/package.accept_keywords
