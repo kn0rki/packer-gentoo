@@ -41,7 +41,7 @@ echo "Creating filesystems"
 
 mkfs.ext4 /dev/sda1
 mkswap /dev/sda2
-mkfs.btrfs --force /dev/sda3
+mkfs.btrfs -f /dev/sda3
 
 swapon /dev/sda2
 
