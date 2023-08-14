@@ -11,6 +11,13 @@ emerge-webrsync && emerge --sync --quiet
 eselect profile set default/linux/amd64/17.1/systemd
 . /etc/profile
 
+emerge net-misc/axel
+
+cat >> /mnt/gentoo/etc/portage/make.conf <<EOT
+FETCHCOMMAND="axel --num-connections=5 --no-proxy --quiet --timeout=30 --alternate --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""'
+RESUMECOMMAND="axel --num-connections=5 --no-proxy --quiet --timeout=30 --alternate --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""'
+EOT
+
 # Install updates
 echo "Updating system"
 emerge -uDN @world
@@ -62,12 +69,8 @@ elif [ "$(dmidecode -s system-product-name)" == "VirtualBox" ]; then
   emerge app-emulation/virtualbox-guest-additions
 
   systemctl enable virtualbox-guest-additions.service
-elif [ "$(dmidecode -s system-product-name)" == "VMware Virtual Platform" ]; then
+elif [ "$(dmidecode -s system-product-name)" =~ .*VMware.* ]]; then
   #echo "app-emulation/open-vm-tools ~amd64" > /etc/portage/package.accept_keywords/vmware
-  emerge app-emulation/open-vm-tools
-
-  systemctl enable vmtoolsd
-elif [ "$(dmidecode -s system-product-name)" == "VMware, Inc." ]; then
   emerge app-emulation/open-vm-tools
 
   systemctl enable vmtoolsd
@@ -78,13 +81,6 @@ fi
 
 # Set up the things we need for a base system
 echo "Configuring up the base system"
-
-emerge net-misc/axel
-
-cat >> /mnt/gentoo/etc/portage/make.conf <<EOT
-FETCHCOMMAND="axel --num-connections=5 --no-proxy --quiet --timeout=30 --alternate --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""'
-RESUMECOMMAND="axel --num-connections=5 --no-proxy --quiet --timeout=30 --alternate --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""'
-EOT
 
 # sudo and cron
 echo "app-admin/sudo -sendmail" > /etc/portage/package.use/sudo
