@@ -69,7 +69,7 @@ elif [ "$(dmidecode -s system-product-name)" == "VirtualBox" ]; then
   emerge app-emulation/virtualbox-guest-additions
 
   systemctl enable virtualbox-guest-additions.service
-elif [ "$(dmidecode -s system-product-name)" =~ .*VMware.* ]]; then
+elif [[ "$(dmidecode -s system-product-name)" =~ .*VMware.* ]]; then
   #echo "app-emulation/open-vm-tools ~amd64" > /etc/portage/package.accept_keywords/vmware
   emerge app-emulation/open-vm-tools
 
