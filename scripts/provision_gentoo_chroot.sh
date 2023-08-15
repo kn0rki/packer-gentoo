@@ -13,7 +13,7 @@ eselect profile set default/linux/amd64/17.1/systemd
 
 emerge net-misc/axel
 
-cat >> /mnt/gentoo/etc/portage/make.conf <<EOT
+cat >> /etc/portage/make.conf <<EOT
 FETCHCOMMAND="axel --num-connections=5 --no-proxy --quiet --timeout=30 --alternate --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""'
 RESUMECOMMAND="axel --num-connections=5 --no-proxy --quiet --timeout=30 --alternate --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""'
 EOT
