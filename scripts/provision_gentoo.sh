@@ -14,7 +14,7 @@ setterm -blank 0 -powersave off
 echo "Partitioning SDA"
 
 fdisk /dev/sda <<EOT
-o
+g
 n
 p
 1
@@ -68,7 +68,7 @@ EOT
 
 # use systemd
 sed -i 's/USE="/USE="systemd /' /mnt/gentoo/etc/portage/make.conf
-sed -i 's/CFLAGS="-O2/CFLAGS="-O2 -march=native  -pipe/' /mnt/gentoo/etc/portage/make.conf
+sed -i 's/CFLAGS="-O2/CFLAGS="-march=native -O2 -pipe/' /mnt/gentoo/etc/portage/make.conf
 #echo 'LDFLAGS="-s"' >> /mnt/gentoo/etc/portage/make.conf
 
 mirrorselect --ipv4 -c Germany -s 5 -o >>/mnt/gentoo/etc/portage/make.conf

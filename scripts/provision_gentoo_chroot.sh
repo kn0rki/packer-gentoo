@@ -11,13 +11,6 @@ emerge-webrsync && emerge --sync --quiet
 eselect profile set default/linux/amd64/17.1/systemd
 . /etc/profile
 
-emerge net-misc/axel
-
-cat >> /etc/portage/make.conf <<EOT
-FETCHCOMMAND="axel --num-connections=5 --no-proxy --quiet --timeout=30 --alternate --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""'
-RESUMECOMMAND="axel --num-connections=5 --no-proxy --quiet --timeout=30 --alternate --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""'
-EOT
-
 # Install updates
 echo "Updating system"
 emerge -uDN @world
@@ -130,7 +123,7 @@ echo 'ansible ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/ansible
 # Install grub and hope everything is ready!
 echo "Installing bootloader"
 
-grub-install /dev/sda --force
+grub-install --force /dev/sda 
 grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "Installing additional tools"
