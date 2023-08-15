@@ -111,7 +111,7 @@ echo "Creating ansible user"
 date > /etc/ansible_box_build_time
 
 useradd -s /bin/bash -m ansible
-echo -e "!" | passwd ansible
+#echo -e "!" | passwd ansible
 
 mkdir -pm 700 /home/ansible/.ssh
 wget -O /home/ansible/.ssh/authorized_keys 'https://github.com/kn0rki.keys'

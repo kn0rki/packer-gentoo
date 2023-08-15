@@ -14,7 +14,7 @@ setterm -blank 0 -powersave off
 echo "Partitioning SDA"
 
 fdisk /dev/sda <<EOT
-g
+o
 n
 p
 1
