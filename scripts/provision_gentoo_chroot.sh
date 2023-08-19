@@ -69,7 +69,6 @@ elif [[ "$(dmidecode -s system-product-name)" =~ .*VMware.* ]]; then
   systemctl enable vmtoolsd
 else
   echo "Unknown hypervisor! :(" 1>&2
-  exit 1
 fi
 
 # Set up the things we need for a base system
