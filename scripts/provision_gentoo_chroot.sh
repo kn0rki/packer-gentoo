@@ -122,7 +122,7 @@ echo 'ansible ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/ansible
 # Install grub and hope everything is ready!
 echo "Installing bootloader"
 
-grub-install --force /dev/sda 
+grub-install --target=x86_64-efi --efi-directory=/boot
 grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "Installing additional tools"
