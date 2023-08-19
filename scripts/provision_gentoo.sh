@@ -14,12 +14,13 @@ setterm -blank 0 -powersave off
 echo "Partitioning SDA"
 
 fdisk /dev/sda <<EOT
-o
+g
 n
 p
 1
+t
 
-+256M
++1G
 n
 p
 2
@@ -39,7 +40,7 @@ EOT
 # Create some filesystems and enable swap (which we'll want for the build, particularly when hv_balloon misbehaves)
 echo "Creating filesystems"
 
-mkfs.ext4 /dev/sda1
+mkfs.fat -F 32 /dev/sda1
 mkswap /dev/sda2
 mkfs.btrfs -f /dev/sda3
 
