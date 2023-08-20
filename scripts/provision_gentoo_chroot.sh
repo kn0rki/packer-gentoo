@@ -42,7 +42,7 @@ fi
 # Build the kernel with genkernel
 echo "Building the kernel"
 
-genkernel --makeopts=-j$(grep processor /proc/cpuinfo| wc -l) all
+time genkernel --makeopts=-j$(grep processor /proc/cpuinfo| wc -l) all
 
 # Build & install the VM tools
 
@@ -126,7 +126,7 @@ grub-install --target=x86_64-efi --efi-directory=/boot
 grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "Installing additional tools"
-emerge gentoolkit
+emerge gentoolkit sys-fs/dosfstools
 
 echo "Updating resolv.conf"
 

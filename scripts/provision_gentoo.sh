@@ -16,24 +16,28 @@ echo "Partitioning SDA"
 fdisk /dev/sda <<EOT
 g
 n
-p
 1
-t
 
 +1G
+t
+1
+
 n
-p
 2
 
 +4G
+
+t
+2
+19
+
 n
-p
 3
 
 
 t
-2
-82
+3
+20
 w
 EOT
 
