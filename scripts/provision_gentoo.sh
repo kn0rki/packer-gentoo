@@ -102,9 +102,9 @@ EOT
 
 # Create an fstab
 cat > /mnt/gentoo/etc/fstab <<EOT
-/dev/sda1 /boot ext4 noauto,noatime    1 2
-/dev/sda2 none  swap sw                0 0
-/dev/sda3 /     btrfs noauto,noatime    0 1
+/dev/sda1   /boot   vfat    defaults            0 2
+/dev/sda2    none   swap    sw                  0 0
+/dev/sda3   /       btrfs   noauto,noatime      0 1
 EOT
 
 
