@@ -11,6 +11,13 @@ emerge-webrsync && emerge --sync --quiet
 eselect profile set default/linux/amd64/17.1/systemd
 . /etc/profile
 
+emerge net-misc/axel
+
+cat >> /etc/portage/make.conf <<EOT
+FETCHCOMMAND="axel --num-connections=5 --no-proxy --quiet --timeout=30 --alternate --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""
+RESUMECOMMAND="axel --num-connections=5 --no-proxy --quiet --timeout=30 --alternate --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""
+EOT
+
 # Install updates
 echo "Updating system"
 emerge -uDN @world
