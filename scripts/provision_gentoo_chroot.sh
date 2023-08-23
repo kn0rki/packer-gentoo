@@ -49,7 +49,7 @@ fi
 # Build the kernel with genkernel
 echo "Building the kernel"
 
-time genkernel --makeopts=-j$(grep processor /proc/cpuinfo| wc -l) all
+time genkernel --kernel-config=/proc/config.gz --makeopts=-j$(nproc) all
 
 # Build & install the VM tools
 
@@ -59,7 +59,6 @@ if [ "$(dmidecode -s system-manufacturer)" == "Microsoft Corporation" ]; then
   cd /usr/src/linux/tools/hv
   make
   cp hv_fcopy_daemon hv_vss_daemon hv_kvp_daemon /usr/sbin
-
   systemctl enable hv_fcopy_daemon.service
   systemctl enable hv_vss_daemon.service
   systemctl enable hv_kvp_daemon.service
@@ -67,12 +66,10 @@ elif [ "$(dmidecode -s system-product-name)" == "VirtualBox" ]; then
   # Install VirtualBox from portage
   echo "app-emulation/virtualbox-guest-additions ~amd64" > /etc/portage/package.accept_keywords/virtualbox
   emerge app-emulation/virtualbox-guest-additions
-
   systemctl enable virtualbox-guest-additions.service
 elif [[ "$(dmidecode -s system-product-name)" =~ .*VMware.* ]]; then
-  #echo "app-emulation/open-vm-tools ~amd64" > /etc/portage/package.accept_keywords/vmware
+  echo "app-emulation/open-vm-tools ~amd64" > /etc/portage/package.accept_keywords/vmware
   emerge app-emulation/open-vm-tools
-
   systemctl enable vmtoolsd
 else
   echo "Unknown hypervisor! :(" 1>&2

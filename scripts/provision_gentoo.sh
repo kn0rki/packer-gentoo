@@ -66,12 +66,10 @@ cp -v /mnt/gentoo/usr/share/portage/config/make.conf.example /mnt/gentoo/etc/por
 
 # configure portage
 cat >> /mnt/gentoo/etc/portage/make.conf <<EOT
-EMERGE_DEFAULT_OPTS="--quiet-build --jobs=4 --autounmask-continue --verbose --deep --newuse  --autounmask-write=y --autounmask=y --color=y --columns --nospinner --rebuild-if-new-rev=y --update"
-USE="-doc -X -gnome -kde symlink"
+EMERGE_DEFAULT_OPTS="--quiet-build --jobs=10 --load-average=$(nproc) --autounmask-continue --verbose --deep --newuse  --autounmask-write=y --autounmask=y --color=y --columns --nospinner --rebuild-if-new-rev=y --update"
+USE="-doc -X -gnome -kde symlink systemd"
 EOT
 
-# use systemd
-sed -i 's/USE="/USE="systemd /' /mnt/gentoo/etc/portage/make.conf
 sed -i 's/CFLAGS="-O2/CFLAGS="-march=native -O2 -pipe/' /mnt/gentoo/etc/portage/make.conf
 #echo 'LDFLAGS="-s"' >> /mnt/gentoo/etc/portage/make.conf
 
@@ -106,10 +104,9 @@ cat > /mnt/gentoo/etc/fstab <<EOT
 /dev/sda3   /       btrfs   noauto,noatime      0 1
 EOT
 
-
 # enter the chroot and run the in-chroot script
-echo "Entering chroot"
 
+echo "Mount folders for chroot {proc,sys,dev}"
 mount -t proc /proc /mnt/gentoo/proc
 mount --rbind /sys /mnt/gentoo/sys
 mount --make-rslave /mnt/gentoo/sys
@@ -118,14 +115,13 @@ mount --make-rslave /mnt/gentoo/dev
 
 cp /etc/resolv.conf /mnt/gentoo/etc/resolv.conf
 
+echo "Entering chroot"
 wget https://raw.githubusercontent.com/kn0rki/packer-gentoo/master/scripts/provision_gentoo_chroot.sh -O /mnt/gentoo/root/provision_gentoo_chroot.sh
 chmod +x /mnt/gentoo/root/provision_gentoo_chroot.sh
-
 chroot /mnt/gentoo /root/provision_gentoo_chroot.sh
 
 # and get ready to reboot
 echo "Chroot finished, ready to restart"
-
 umount -l /mnt/gentoo/{proc,sys,dev,boot,}
 
 # hail mary!
