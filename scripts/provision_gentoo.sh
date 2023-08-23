@@ -47,23 +47,22 @@ echo "Creating filesystems"
 mkfs.fat -F 32 /dev/sda1
 mkswap /dev/sda2
 mkfs.btrfs -f /dev/sda3
-
 swapon /dev/sda2
 
 # Pull the latest stage3 and unpack into the new filesystem
 echo "Unpacking stage 3"
 
 mount /dev/sda3 /mnt/gentoo
-
 mkdir -p /mnt/gentoo/boot
 mount /dev/sda1 /mnt/gentoo/boot
 
 FOO="$(curl -SsLl https://mirror.netcologne.de/gentoo/releases/amd64/autobuilds/current-stage3-amd64-systemd/ | grep 'href="stage3-amd64-systemd' | head -n 1 | cut -d '"' -f 2)"
 curl -SsLl "https://mirror.netcologne.de/gentoo/releases/amd64/autobuilds/current-stage3-amd64-systemd/`echo $FOO`" | tar xpJ -C /mnt/gentoo --xattrs --numeric-owner && break
 
-
 # modify the chroot with some custom settings
 echo "Setting up chroot configuration"
+
+cp -v /mnt/gentoo/usr/share/portage/config/make.conf.example /mnt/gentoo/etc/portage/make.conf
 
 # configure portage
 cat >> /mnt/gentoo/etc/portage/make.conf <<EOT
@@ -76,7 +75,7 @@ sed -i 's/USE="/USE="systemd /' /mnt/gentoo/etc/portage/make.conf
 sed -i 's/CFLAGS="-O2/CFLAGS="-march=native -O2 -pipe/' /mnt/gentoo/etc/portage/make.conf
 #echo 'LDFLAGS="-s"' >> /mnt/gentoo/etc/portage/make.conf
 
-mirrorselect --ipv4 -c Germany -s 5 -o >>/mnt/gentoo/etc/portage/make.conf
+mirrorselect -c Germany -s 5 -o >>/mnt/gentoo/etc/portage/make.conf
 
 # package-specific configuration and unmasks
 mkdir -p /mnt/gentoo/etc/portage/package.accept_keywords
