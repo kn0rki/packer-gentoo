@@ -91,7 +91,7 @@ echo "127.0.1.1 gentoo-minimal.local gentoo-minimal" >> /etc/hosts
 # networking
 cat > /etc/systemd/network/50-dhcp.network <<EOT
 [Match]
-Name=ens32
+Name=en*
 
 [Network]
 DHCP=yes
