@@ -14,8 +14,8 @@ eselect profile set default/linux/amd64/17.1/systemd
 emerge net-misc/axel
 
 cat >> /etc/portage/make.conf <<EOT
-FETCHCOMMAND="axel --num-connections=5 --no-proxy --quiet --timeout=30 --alternate --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""
-RESUMECOMMAND="axel --num-connections=5 --no-proxy --quiet --timeout=30 --alternate --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""
+FETCHCOMMAND="axel --num-connections=4 --no-proxy --quiet --timeout=2 --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""
+RESUMECOMMAND="axel --num-connections=4 --no-proxy --quiet --timeout=2 --no-clobber --output=\"\${DISTDIR}/\${FILE}\" \"\${URI}\""
 EOT
 
 # Install updates

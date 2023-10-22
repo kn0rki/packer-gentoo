@@ -73,7 +73,7 @@ EOT
 sed -i 's/CFLAGS="-O2/CFLAGS="-march=native -O2 -pipe/' /mnt/gentoo/etc/portage/make.conf
 #echo 'LDFLAGS="-s"' >> /mnt/gentoo/etc/portage/make.conf
 
-mirrorselect -c Germany -s 5 -o >>/mnt/gentoo/etc/portage/make.conf
+mirrorselect -c Germany -s 5 -H -o >>/mnt/gentoo/etc/portage/make.conf
 
 # package-specific configuration and unmasks
 mkdir -p /mnt/gentoo/etc/portage/package.accept_keywords
