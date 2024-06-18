@@ -56,7 +56,7 @@ mount /dev/sda3 /mnt/gentoo
 mkdir -p /mnt/gentoo/boot
 mount /dev/sda1 /mnt/gentoo/boot
 
-FOO="$(curl -SsLl https://mirror.netcologne.de/gentoo/releases/amd64/autobuilds/current-stage3-amd64-systemd/ | grep 'href="stage3-amd64-systemd' | head -n 1 | cut -d '"' -f 2)"
+FOO="$(curl -SsLl https://mirror.netcologne.de/gentoo/releases/amd64/autobuilds/current-stage3-amd64-systemd/ | grep 'href="stage3-amd64-systemd' |  cut -d '"' -f 2 | grep 'tar.xz$')"
 curl -SsLl "https://mirror.netcologne.de/gentoo/releases/amd64/autobuilds/current-stage3-amd64-systemd/`echo $FOO`" | tar xpJ -C /mnt/gentoo --xattrs --numeric-owner && break
 
 # modify the chroot with some custom settings
